@@ -18,6 +18,10 @@
 void interrupt isr()
 {
 	clock_isr();
+	// Таймер ожидания
+	if (TMR2IF){
+		TMR2IF = 0;
+	}
 }
 
 
@@ -60,13 +64,18 @@ uint32_t id2addr()
 bool transmit(PACKET *pkt, uint8_t retry)
 {
 	bool ret = false;
-	// Настраиваем таймер подтверждения доставки
-	TMR2MD = 0;
-	asm("nop");
-	T2CLKCON = 0b00000010;
-	T2CON    = CONFIRM_WAIT_PS<<4;
-	T2HLT    = 0b00001000;
-	T2PR     = (CONFIRM_WAIT_PR/CONFIRM_WAIT_DIV)-1;
+	// Настраиваем таймер паузы между пакетами
+	if (retry>1){
+		TMR2MD   = 0;
+		asm("nop");
+		T2CLKCON = 0b00000010;
+		T2CON    = PKT_DELAY_PS<<4;
+		T2HLT    = 0b00001000;
+		T2PR     = (PKT_DELAY_PR/PKT_DELAY_DIV)-1;
+		T2TMR    = 0;
+		TMR2IF   = 0;
+		TMR2IE   = 1;
+	}
 	// Очищаем буфер приема
 	cc1101_strobe(CC1101_SFRX);	
 	// Пробуем отослать
@@ -75,16 +84,16 @@ bool transmit(PACKET *pkt, uint8_t retry)
 		cc1101_strobe(CC1101_SFTX);
 		cc1101_write_burst(CC1101_FIFO, (uint8_t *) pkt, sizeof(PACKET));
 		cc1101_strobe(CC1101_STX);
-		// Ждем подтверждение
-		T2TMR = 0;
-		T2ON  = 1;
-		while (T2ON && !PORT(CC1101_SO_PORT, CC1101_SO_PIN));
-		if (T2ON){
-			T2ON  = 0;
-			ret   = true;
-			break;
-		}
-		else{
+		cc1101_so_waith();
+		cc1101_so_waitl();
+		// Пауза перед повтором
+		if (retry){
+			// Отправляем радио в сон
+			cc1101_strobe(CC1101_SPWD);
+			// Выдерживаем паузу
+			T2ON = 1;
+			while(T2ON) SLEEP();
+			// Будим радио
 			cc1101_strobe(CC1101_SIDLE);
 		}
 	}

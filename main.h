@@ -7,34 +7,34 @@
 #define TRANSMIT_INTERVAL 30
 
 
-#define CONFIRM_WAIT_MS  7
-#define CONFIRM_WAIT_PR  (_XTAL_FREQ*CONFIRM_WAIT_MS/1000)
-#if (CONFIRM_WAIT_PR/1)<=256
-	#define CONFIRM_WAIT_DIV  1
-	#define CONFIRM_WAIT_PS   0b000
-#elif (CONFIRM_WAIT_PR/2)<=256
-	#define CONFIRM_WAIT_DIV  2
-	#define CONFIRM_WAIT_PS   0b001
-#elif (CONFIRM_WAIT_PR/4)<=256
-	#define CONFIRM_WAIT_DIV  4
-	#define CONFIRM_WAIT_PS   0b010
-#elif (CONFIRM_WAIT_PR/8)<=256
-	#define CONFIRM_WAIT_DIV  8
-	#define CONFIRM_WAIT_PS   0b011
-#elif (CONFIRM_WAIT_PR/16)<=256
-	#define CONFIRM_WAIT_DIV  16
-	#define CONFIRM_WAIT_PS   0b100
-#elif (CONFIRM_WAIT_PR/32)<=256
-	#define CONFIRM_WAIT_DIV  32
-	#define CONFIRM_WAIT_PS   0b101
-#elif (CONFIRM_WAIT_PR/64)<=256
-	#define CONFIRM_WAIT_DIV  64
-	#define CONFIRM_WAIT_PS   0b110
-#elif (CONFIRM_WAIT_PR/128)<=256
-	#define CONFIRM_WAIT_DIV  128
-	#define CONFIRM_WAIT_PS   0b111
+#define PKT_DELAY_MS  7
+#define PKT_DELAY_PR  (_XTAL_FREQ*PKT_DELAY_MS/1000)
+#if (PKT_DELAY_PR/1)<=256
+	#define PKT_DELAY_DIV  1
+	#define PKT_DELAY_PS   0b000
+#elif (PKT_DELAY_PR/2)<=256
+	#define PKT_DELAY_DIV  2
+	#define PKT_DELAY_PS   0b001
+#elif (PKT_DELAY_PR/4)<=256
+	#define PKT_DELAY_DIV  4
+	#define PKT_DELAY_PS   0b010
+#elif (PKT_DELAY_PR/8)<=256
+	#define PKT_DELAY_DIV  8
+	#define PKT_DELAY_PS   0b011
+#elif (PKT_DELAY_PR/16)<=256
+	#define PKT_DELAY_DIV  16
+	#define PKT_DELAY_PS   0b100
+#elif (PKT_DELAY_PR/32)<=256
+	#define PKT_DELAY_DIV  32
+	#define PKT_DELAY_PS   0b101
+#elif (PKT_DELAY_PR/64)<=256
+	#define PKT_DELAY_DIV  64
+	#define PKT_DELAY_PS   0b110
+#elif (PKT_DELAY_PR/128)<=256
+	#define PKT_DELAY_DIV  128
+	#define PKT_DELAY_PS   0b111
 #else
-	#error "Invalid CONFIRM_WAIT_MS"
+	#error "Invalid PKT_DELAY_MS"
 #endif
 
 
@@ -44,7 +44,7 @@ const uint8_t paTable[8]   = {0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 const uint8_t rfSettings[] = {
     0x2F,  // IOCFG2        GDO2 Output Pin Configuration
-    0x01,  // IOCFG1        GDO1 Output Pin Configuration (0x29 = CHIP_RDYn, 0x23 = 3-state)
+    0x06,  // IOCFG1        GDO1 Output Pin Configuration (0x29 = CHIP_RDYn, 0x23 = 3-state)
     0x2F,  // IOCFG0        GDO0 Output Pin Configuration
     0x07,  // FIFOTHR       RX FIFO and TX FIFO Thresholds
     0xD3,  // SYNC1         Sync Word, High Byte
@@ -67,7 +67,7 @@ const uint8_t rfSettings[] = {
     0x62,  // DEVIATN       Modem Deviation Setting
     0x07,  // MCSM2         Main Radio Control State Machine Configuration
 //!!!
-    0x33,  // MCSM1         0x30: rx->idle, tx->idle; 0x33: rx->idle, tx->rx
+    0x30,  // MCSM1         0x30: rx->idle, tx->idle; 0x33: rx->idle, tx->rx
 //!!!
     0x18,  // MCSM0         Main Radio Control State Machine Configuration
     0x1D,  // FOCCFG        Frequency Offset Compensation Configuration
