@@ -8,7 +8,7 @@ FOSC     = 1000000UL
 
 OBJ_DIR  = ./obj
 
-CFLAGS=--chip=$(MCU) -D_XTAL_FREQ=$(FOSC) -Q --debugger=none \
+CFLAGS=--chip=$(MCU) -D_XTAL_FREQ=$(FOSC) -D_LFINTOSC_FREQ=32000UL -Q --debugger=none \
 	--opt=asm,space --dep=none --objdir=$(OBJ_DIR)
 
 all: $(OBJ_DIR) $(NAME).cof

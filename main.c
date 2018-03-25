@@ -68,7 +68,7 @@ bool transmit(PACKET *pkt, uint8_t retry)
 	if (retry>1){
 		TMR2MD   = 0;
 		asm("nop");
-		T2CLKCON = 0b00000010;
+		T2CLKCON = 0b00000100;
 		T2CON    = PKT_DELAY_PS<<4;
 		T2HLT    = 0b00001000;
 		T2PR     = (PKT_DELAY_PR/PKT_DELAY_DIV)-1;
